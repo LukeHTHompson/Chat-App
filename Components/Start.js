@@ -10,7 +10,7 @@ export default class Start extends React.Component {
     this.state = {
       yourName: '',
       color: '',
-      errorMessage: 'Your Name'
+      errorMessage: '  Your Name'
     };
   }
 
@@ -45,27 +45,35 @@ export default class Start extends React.Component {
               </View>
               {/* Store chosen color in state by passing background color of element to funciton to set state */}
               <View style={[styles.ColorList, { backgroundColor: this.state.color }]}>
-                <Pressable style={styles.Color1}
-                  onPress={() => this.setState({
-                    color: '#090C08'
-                  })}
-                ></Pressable>
-                <Pressable style={styles.Color2}
-                  onPress={() => this.setState({
-                    color: '#474056'
-                  })}
-                ></Pressable>
-                <Pressable style={styles.Color3}
-                  onPress={() => this.setState({
-                    color: '#8A95A5'
-                  })}
-                ></Pressable>
-                <Pressable style={styles.Color4}
-                  onPress={() =>
-                    this.setState({
-                      color: '#B9C6AE'
+                <View style={styles.ColorOptionHolder}>
+                  <Pressable style={styles.Color1}
+                    onPress={() => this.setState({
+                      color: '#090C08'
                     })}
-                ></Pressable>
+                  ></Pressable>
+                </View>
+                <View style={styles.ColorOptionHolder}>
+                  <Pressable style={styles.Color2}
+                    onPress={() => this.setState({
+                      color: '#474056'
+                    })}
+                  ></Pressable>
+                </View>
+                <View style={styles.ColorOptionHolder}>
+                  <Pressable style={styles.Color3}
+                    onPress={() => this.setState({
+                      color: '#8A95A5'
+                    })}
+                  ></Pressable>
+                </View>
+                <View style={styles.ColorOptionHolder}>
+                  <Pressable style={styles.Color4}
+                    onPress={() =>
+                      this.setState({
+                        color: '#B9C6AE'
+                      })}
+                  ></Pressable>
+                </View>
               </View>
             </View>
             <View style={styles.ButtonContainer}>
@@ -84,9 +92,9 @@ export default class Start extends React.Component {
                     }
                     if (this.state.yourName !== '') {
                       this.setState({
-                        errorMessage: 'Your Name'
+                        errorMessage: ' Your Name'
                       })
-                      this.props.navigation.navigate('Chat', { yourName: this.state.yourName.toUpperCase(), color: this.state.color })
+                      this.props.navigation.navigate('Chat', { yourName: this.state.yourName, color: this.state.color })
                     }
                   }}
               >
@@ -169,7 +177,7 @@ const styles = StyleSheet.create({
   ColorContainer: {
     flex: .5,
     flexDirection: 'column',
-    justifyContent: 'flex-end',
+    // justifyContent: 'center',
     marginLeft: '6%',
     marginRight: '6%',
     width: '88%'
@@ -186,29 +194,49 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     width: '100%'
   },
+  ColorOptionHolder: {
+    flex: 1,
+    alignContent: 'flex-end'
+  },
   Color1: {
-    margin: 'auto',
+    // marginTop: 35,
+    marginLeft: 'auto',
+    marginRight: 'auto',
+    marginTop: 'auto',
+    marginBottom: 'auto',
     height: 50,
     width: 50,
     borderRadius: 25,
     backgroundColor: '#090C08'
   },
   Color2: {
-    margin: 'auto',
+    // marginTop: 35,
+    marginLeft: 'auto',
+    marginRight: 'auto',
+    marginTop: 'auto',
+    marginBottom: 'auto',
     height: 50,
     width: 50,
     borderRadius: 25,
     backgroundColor: '#474056'
   },
   Color3: {
-    margin: 'auto',
+    // marginTop: 35,
+    marginLeft: 'auto',
+    marginRight: 'auto',
+    marginTop: 'auto',
+    marginBottom: 'auto',
     height: 50,
     width: 50,
     borderRadius: 25,
     backgroundColor: '#8A95A5'
   },
   Color4: {
-    margin: 'auto',
+    // marginTop: 35,
+    marginLeft: 'auto',
+    marginRight: 'auto',
+    marginTop: 'auto',
+    marginBottom: 'auto',
     height: 50,
     width: 50,
     borderRadius: 25,
