@@ -1,6 +1,8 @@
+// C:\Users\Luke\AppData\Local\Android\Sdk\platform-tools\adb.exe start-server
+
 import { NavigationContainer } from '@react-navigation/native';
 import React, { Component } from 'react';
-import { StyleSheet, View, Text, TextInput, Button, Pressable, ImageBackground } from 'react-native';
+import { StyleSheet, View, Text, TextInput, Button, Pressable, ImageBackground, Platform, KeyboardAvoidingView } from 'react-native';
 import TouchHistoryMath from 'react-native/Libraries/Interaction/TouchHistoryMath';
 import image from "../assets/background-image.png";
 
@@ -29,11 +31,10 @@ export default class Start extends React.Component {
               style={styles.NameContainer}
             >
               <TextInput
-                placeholder={this.state.errorMessage}
                 style={styles.NamePlaceholder}
-                onChange={(input) => this.setState({
-                  yourName: input.target.value
-                })}
+                placeholder={this.state.errorMessage}
+                // value={this.state.yourName}
+                onChangeText={(yourName) => this.setState({ yourName })}
               >
               </TextInput>
             </View>
@@ -83,7 +84,7 @@ export default class Start extends React.Component {
               <Pressable style={styles.Button}
                 onPress={
                   () => {
-                    if (this.state.yourName === '') {
+                    if (this.state.yourName == '') {
                       this.setState({
                         errorMessage: 'You must provide a name before chatting'
                       })
@@ -94,6 +95,7 @@ export default class Start extends React.Component {
                       this.setState({
                         errorMessage: ' Your Name'
                       })
+                      // console.log(this.state.yourName)
                       this.props.navigation.navigate('Chat', { yourName: this.state.yourName, color: this.state.color })
                     }
                   }}
@@ -102,6 +104,9 @@ export default class Start extends React.Component {
               </Pressable>
             </View>
           </View>
+          {Platform.OS === 'android'
+            ? <KeyboardAvoidingView behavior="height" />
+            : null}
         </View>
       </ImageBackground >
     );
