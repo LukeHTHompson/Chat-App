@@ -3,6 +3,9 @@ import React, { Component } from 'react';
 import { StyleSheet, View, Text, TextInput, Button, Pressable, Platform, KeyboardAvoidingView } from 'react-native';
 import { GiftedChat, Bubble } from 'react-native-gifted-chat'
 
+const firebase = require('firebase');
+require('firebase/firestore');
+
 export default class Chat extends React.Component {
   constructor(props) {
     super(props);
@@ -13,93 +16,75 @@ export default class Chat extends React.Component {
       color: this.props.route.params.color,
       // Initialize empty messages list
       messages: [],
+      uid: '',
     };
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyCwsV4XYpPlRXz2g4-1T6w0TbUaJivI5_g",
+      authDomain: "chat-app-1-6dcdc.firebaseapp.com",
+      projectId: "chat-app-1-6dcdc",
+      storageBucket: "chat-app-1-6dcdc.appspot.com",
+      messagingSenderId: "190541137213"
+    }
+
+    if (!firebase.apps.length) {
+      firebase.initializeApp(firebaseConfig);
+    }
+    this.referenceChatMessages = firebase.firestore().collection("messages");
+
   }
 
   componentDidMount() {
-    this.setState({
-      // Populate messages state with test messages
-      // Temporary only, eventually pull from DB
-      messages: [
-        {
-          _id: 8,
-          text: "I'm sorry Dave. I'm afraid I can't do that.",
-          createdAt: new Date(),
-          user: {
-            _id: 3,
-            name: 'React Native',
-            avatar: 'https://static01.nyt.com/images/2018/05/15/arts/01hal-voice1/merlin_135847308_098289a6-90ee-461b-88e2-20920469f96a-superJumbo.jpg',
-          },
-        },
-        {
-          _id: 7,
-          text: "Open the pod bay doors, Space Hal.",
-          createdAt: new Date(),
-          user: {
-            _id: 2,
-            name: 'React Native',
-            avatar: 'https://m.media-amazon.com/images/M/MV5BZGJiOGEyYWQtNWYyMC00MWRiLWIzMzMtNTMxNjVlMGEwZWM3XkEyXkFqcGdeQXRodW1ibmFpbC1pbml0aWFsaXplcg@@._V1_.jpg',
-          },
-        },
-        {
-          _id: 6,
-          text: "Affirmative Dave, I read you.",
-          createdAt: new Date(),
-          user: {
-            _id: 3,
-            name: 'React Native',
-            avatar: 'https://static01.nyt.com/images/2018/05/15/arts/01hal-voice1/merlin_135847308_098289a6-90ee-461b-88e2-20920469f96a-superJumbo.jpg',
-          },
-        },
-        {
-          _id: 5,
-          text: "Do you read me, Hal?",
-          createdAt: new Date(),
-          user: {
-            _id: 2,
-            name: 'React Native',
-            avatar: 'https://m.media-amazon.com/images/M/MV5BZGJiOGEyYWQtNWYyMC00MWRiLWIzMzMtNTMxNjVlMGEwZWM3XkEyXkFqcGdeQXRodW1ibmFpbC1pbml0aWFsaXplcg@@._V1_.jpg',
-          },
-        },
-        {
-          _id: 4,
-          text: "Hello? Hal, do you read me?",
-          createdAt: new Date(),
-          user: {
-            _id: 2,
-            name: 'React Native',
-            avatar: 'https://m.media-amazon.com/images/M/MV5BZGJiOGEyYWQtNWYyMC00MWRiLWIzMzMtNTMxNjVlMGEwZWM3XkEyXkFqcGdeQXRodW1ibmFpbC1pbml0aWFsaXplcg@@._V1_.jpg',
-          },
-        },
-        {
-          _id: 3,
-          text: "OPEN the pod bay doors, Space Hal!",
-          createdAt: new Date(),
-          user: {
-            _id: 2,
-            name: 'React Native',
-            avatar: 'https://static01.nyt.com/images/2018/05/15/arts/01hal-voice1/merlin_135847308_098289a6-90ee-461b-88e2-20920469f96a-superJumbo.jpg',
-          },
-        },
-        {
-          _id: 2,
-          text: "Open the pod bay doors, Space Hal.",
-          createdAt: new Date(),
-          user: {
-            _id: 2,
-            name: 'React Native',
-            avatar: 'https://m.media-amazon.com/images/M/MV5BZGJiOGEyYWQtNWYyMC00MWRiLWIzMzMtNTMxNjVlMGEwZWM3XkEyXkFqcGdeQXRodW1ibmFpbC1pbml0aWFsaXplcg@@._V1_.jpg',
-          },
-        },
-        {
-          _id: 1,
-          text: `${this.state.yourName} has entered the chat.`,
-          createdAt: new Date(),
-          system: true,
-        },
-      ],
-    })
+    // Populate messages from DB
+    this.referenceChatMessages = firebase.firestore().collection('messages');
+    if (this.referenceChatMessages) {
+      this.unsubscribe = this.referenceChatMessages.onSnapshot(this.onCollectionUpdate)
+    }
+
+    this.authUnsubscribe = firebase.auth().onAuthStateChanged((user) => {
+      if (!user) {
+        firebase.auth().signInAnonymously();
+      }
+      this.setState({
+        uid: user.uid,
+        messages: [],
+      });
+      this.unsubscribe = this.referenceChatMessages
+        .orderBy("createdAt", "desc")
+        .onSnapshot(this.onCollectionUpdate);
+    });
   }
+
+  componentWillUnmount() {
+    this.unsubscribe();
+  }
+
+  onCollectionUpdate = (querySnapshot) => {
+    const messages = [];
+    // go through each document in collection 'messages'
+    querySnapshot.forEach((message) => {
+      // get the QueryDocumentSnapshot's data
+      let data = message.data();
+      // console.log(message)
+      // console.log(data)
+      messages.push({
+        key: message.id,
+        _id: message.id,
+        // user: data.user,
+        // avatar: data.avatar,
+        createdAt: data.createdAt.toDate(),
+        text: data.text,
+        user: {
+          _id: data.user._id,
+          name: data.user.name,
+          avatar: data.user.avatar,
+        },
+      });
+    });
+    this.setState({
+      messages,
+    });
+  };
 
   renderBubble(props) {
     return (
@@ -118,10 +103,27 @@ export default class Chat extends React.Component {
     )
   }
 
+  // Called whenever a user clicks send on their message
   onSend(messages = []) {
     this.setState(previousState => ({
       messages: GiftedChat.append(previousState.messages, messages),
     }))
+    this.addMessage(messages)
+  }
+
+  // Called as part of onSend() whenever a user clicks send on their message
+  addMessage(message) {
+    // console.log(message)
+    this.referenceChatMessages.add({
+      createdAt: new Date(),
+      text: message[0].text,
+      user: {
+        _id: this.state.uid,
+        name: this.state.yourName,
+        // Currently there is no way for a user to define a profile picture so I am leaving this line out for now.
+        // avatar: data.user.avatar,
+      }
+    })
   }
 
   render() {
@@ -150,9 +152,9 @@ export default class Chat extends React.Component {
           messages={this.state.messages}
           // Called when user hits send button
           // Adds the typed out message to the messages state, here from user with _id = 1
-          onSend={messages => this.onSend(messages)}
+          onSend={message => this.onSend(message)}
           user={{
-            _id: 1,
+            _id: this.state.uid,
           }}
         />
         {/* When using an android device prevent keyboard from overtaking the input field by rendering the keyboardAvoidingView component */}
