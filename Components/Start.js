@@ -4,6 +4,8 @@ import { NavigationContainer } from '@react-navigation/native';
 import React, { Component } from 'react';
 import { StyleSheet, View, Text, TextInput, Button, Pressable, ImageBackground, Platform, KeyboardAvoidingView } from 'react-native';
 import TouchHistoryMath from 'react-native/Libraries/Interaction/TouchHistoryMath';
+import AsyncStorage from '@react-native-community/async-storage';
+
 import image from "../assets/background-image.png";
 
 export default class Start extends React.Component {
