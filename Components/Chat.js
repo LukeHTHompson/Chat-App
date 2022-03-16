@@ -2,8 +2,10 @@ import { NavigationContainer } from '@react-navigation/native';
 import React, { Component } from 'react';
 import { StyleSheet, View, Text, TextInput, Button, Pressable, Platform, KeyboardAvoidingView } from 'react-native';
 import { GiftedChat, Bubble, InputToolbar } from 'react-native-gifted-chat'
-import AsyncStorage from '@react-native-community/async-storage';
+// import AsyncStorage from '@react-native-community/async-storage';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import NetInfo from '@react-native-community/netinfo';
+import CustomActions from './CustomActions.js'
 
 // Firebase Code
 const firebase = require('firebase');
@@ -201,7 +203,34 @@ export default class Chat extends React.Component {
     })
   }
 
-  renderBubble(props) {
+  renderCustomActions = (props) => {
+    return <CustomActions {...props} />;
+  };
+
+  renderMapView = (props) => {
+    const { currentMessage } = props;
+    if (currentMessage.location) {
+      return (
+        <MapView
+          style={{
+            width: 150,
+            height: 100,
+            borderRadius: 13,
+            margin: 3
+          }}
+          region={{
+            latitude: currentMessage.location.latitude,
+            longitude: currentMessage.location.longitude,
+            latitudeDelta: 0.0922,
+            longitudeDelta: 0.0421,
+          }}
+        />
+      );
+    }
+    return null;
+  }
+
+  renderBubble = (props) => {
     return (
       <Bubble
         {...props}
@@ -218,7 +247,7 @@ export default class Chat extends React.Component {
     )
   }
 
-  renderInputToolbar(props) {
+  renderInputToolbar = (props) => {
     if (this.state.internet == 'offline') {
     } else {
       return (
@@ -233,9 +262,14 @@ export default class Chat extends React.Component {
     return (
       <View style={styles.AllContainer}>
         <GiftedChat
+          // Prop to give a plus sign that opens into more action options (images, location, etc.)
+          renderActions={this.renderCustomActions}
+          // Prop to show a custom view which will be the map for sharing location data
+          renderCustomView={this.renderMapView}
           // Prop to change bubble colors
-          renderBubble={this.renderBubble.bind(this)}
-          renderInputToolbar={this.renderInputToolbar.bind(this)}
+          renderBubble={this.renderBubble}
+          renderInputToolbar={this.renderInputToolbar}
+          // {this.renderInputToolbar.bind(this)} // Use .bind(this) if function defined as name() {. . .} ???
           // Prop to give messages state which holds our current messages.
           // Messages here is the full list of displayed messages.
           messages={this.state.messages}
