@@ -4,7 +4,8 @@ import { StyleSheet, View, Text, TextInput, Button, Pressable, Platform, Keyboar
 import { GiftedChat, Bubble, InputToolbar } from 'react-native-gifted-chat'
 // import AsyncStorage from '@react-native-community/async-storage';
 import NetInfo from '@react-native-community/netinfo';
-import CustomActions from './CustomActions.js'
+import CustomActions from './CustomActions.js';
+import MapView from 'react-native-maps';
 
 // Firebase Code
 const firebase = require('firebase');
@@ -20,8 +21,15 @@ export default class Chat extends React.Component {
       color: this.props.route.params.color,
       // Initialize empty messages list
       messages: [],
-      uid: '',
+      uid: 0,
+      user: {
+        _id: '',
+        name: '',
+        avatar: '',
+      },
       internet: '',
+      image: null,
+      location: null
     };
 
 
@@ -105,7 +113,6 @@ export default class Chat extends React.Component {
       }
     });
 
-    console.log(this.state);
     if (this.state.internet == 'offline') {
       this.getuid()
       this.getMessages()
@@ -165,6 +172,8 @@ export default class Chat extends React.Component {
           name: data.user.name,
           avatar: data.user.avatar,
         },
+        image: data.image || null,
+        location: data.location || null,
       });
     });
     this.setState({
@@ -174,31 +183,41 @@ export default class Chat extends React.Component {
 
   // Called whenever a user clicks send on their message
   onSend(messages = []) {
+    // if (this.state.internet == 'online') {
+    this.setState(previousState => ({
+      messages: GiftedChat.append(previousState.messages, messages),
+    }), () => {
+      console.log('SAVE Message:', messages, 'SAVE STATE:', this.state.messages)
+      this.saveMessages();
+      console.log('post-SAVE Message:', messages, 'post-SAVE STATE:', this.state.messages)
+    })
     if (this.state.internet == 'online') {
-      this.setState(previousState => ({
-        messages: GiftedChat.append(previousState.messages, messages),
-      }), () => {
-        this.saveMessages();
-      })
-
       // Firebase Code
+      console.log('ADD Message:', messages, 'ADD STATE:', this.state.messages)
       this.addMessage(messages)
+      console.log('post-ADD Message:', messages, 'post-ADD STATE:', this.state.messages)
     }
+    // }
   }
 
   // Called as part of onSend() whenever a user clicks send on their message
   addMessage(message) {
-
+    let currentMessage = message[message.length - 1]
     // Firebase Code
+    console.log('in-Add Message:', currentMessage)
     this.referenceChatMessages.add({
-      createdAt: new Date(),
-      text: message[0].text,
+      key: currentMessage._id,
+      _id: currentMessage._id,
+      text: currentMessage.text || '',
+      createdAt: currentMessage.createdAt,
       user: {
         _id: this.state.uid,
         name: this.state.yourName,
         // Currently there is no way for a user to define a profile picture so I am leaving this line out for now.
         // avatar: data.user.avatar,
-      }
+      },
+      image: currentMessage.image || '',
+      location: currentMessage.location || null,
     })
   }
 

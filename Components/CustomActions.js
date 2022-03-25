@@ -1,19 +1,21 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-import { StatusBar } from 'expo-status-bar';
 
 // Extras
 import * as MediaLibrary from 'expo-media-library';
 import { Camera } from 'expo-camera';
 import * as ImagePicker from 'expo-image-picker';
 import * as Location from 'expo-location';
+import firebase from 'firebase';
+import 'firebase/firestore';
 
 export default class CustomActions extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
       image: null,
+      location: null,
       rollPermission: '',
       camPermission: '',
       locPermission: '',
@@ -32,15 +34,13 @@ export default class CustomActions extends React.Component {
         switch (buttonIndex) {
           case 0:
             console.log('user wants to pick an image');
-            pickImage();
-            return;
+            return this.pickImage();
           case 1:
             console.log('user wants to take a photo');
-            takePhoto();
-            return;
+            return this.takePhoto();
           case 2:
             console.log('user wants to get their location');
-            getLocation();
+            return this.getLocation();
           default:
         }
       },
@@ -65,6 +65,8 @@ export default class CustomActions extends React.Component {
           image: result
         });
         console.log(result)
+        const imageUrl = await this.uploadImage(result.uri)
+        this.props.onSend({ image: imageUrl })
       }
     }
   }
@@ -84,6 +86,8 @@ export default class CustomActions extends React.Component {
         this.setState({
           image: result
         });
+        const imageUrl = await this.uploadImage(result.uri)
+        this.props.onSend({ image: imageUrl })
       }
     }
   }
@@ -103,9 +107,43 @@ export default class CustomActions extends React.Component {
         this.setState({
           location: result
         })
+        this.props.onSend({
+          location: {
+            longitude: result.coords.longitude,
+            latitude: result.coords.latitude,
+          },
+        })
       }
     }
   }
+
+  // Store uploaded image to firebase as blob
+  uploadImage = async (uri) => {
+    const blob = await new Promise((resolve, reject) => {
+      const xhr = new XMLHttpRequest();
+      xhr.onload = function () {
+        resolve(xhr.response);
+      };
+      xhr.onerror = function (e) {
+        console.log(e);
+        reject(new TypeError('Network request failed'));
+      };
+      xhr.responseType = 'blob';
+      xhr.open('GET', uri, true);
+      xhr.send(null);
+    });
+
+    const imageNameBefore = uri.split('/');
+    const imageName = imageNameBefore[imageNameBefore.length - 1];
+
+    const ref = firebase.storage().ref().child(`images/${imageName}`);
+
+    const snapshot = await ref.put(blob);
+
+    blob.close();
+
+    return await snapshot.ref.getDownloadURL();
+  };
 
   render() {
     return (
