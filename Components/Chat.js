@@ -33,7 +33,7 @@ export default class Chat extends React.Component {
     };
 
 
-    // Firebase Code
+    // Firebase Config
     const firebaseConfig = {
       apiKey: "AIzaSyCwsV4XYpPlRXz2g4-1T6w0TbUaJivI5_g",
       authDomain: "chat-app-1-6dcdc.firebaseapp.com",
@@ -41,6 +41,7 @@ export default class Chat extends React.Component {
       storageBucket: "chat-app-1-6dcdc.appspot.com",
       messagingSenderId: "190541137213"
     }
+    // Firebase Config
 
     if (!firebase.apps.length) {
       firebase.initializeApp(firebaseConfig);
