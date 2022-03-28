@@ -4,6 +4,7 @@ This is a basic chat app. Currently users can customize their chat name, colors,
 # chat-app Setup
 1. Clone this repo into a new folder on your computer.
 2. Using a Command Line Interface navigate to this new folder and run the following commands: (???)
+      `
       npm install expo-cli --global
       expo install expo-camera
       expo install expo-image-picker
@@ -13,9 +14,35 @@ This is a basic chat app. Currently users can customize their chat name, colors,
       npm install @react-native-async-storage/async-storage
       npm install --save react-navigation
       Continue if necessary from package.json
-3. 
+      `
+3. In your web browser navigate to https://firebase.google.com/
+4. Create an account on this page so you can use Firebase, or if you have an existing account click "Go To Console".
+5. Once in Console add a new project with any name you like.
+6. Click this button to see your FirebaseConfig which you will need to place into Components/Chat.js for your project.
+      ![image](https://user-images.githubusercontent.com/88896427/160430940-aebda5cb-4ebf-4025-9255-076901acb999.png)
+7. Once you have given your app a name you will be taken to a screen with sample code. Copy the entire variable firebaseConfig from this sample code and replace the existing firebaseConfig from Chat.js with your own firebaseConfig data.
+8. Return to Firebase Console. Click 'Firestore Database' (NOT Realtime Database) on the left side of Firebase Console, then 'Create Database'. Choose to start in test mode. Choose a storage location (I recommend whichever seems closest to you) and click done.
+9. Once this database is created click 'Start Collection' and give the Collection ID 'messages'.
+10. You will be prompted to create the first document in the database. Let the database use Auto-ID and give the following fields = types (and values):
+      _id = string (123123)
+      createdAt = timestamp (today's date)
+      image = string (null)
+      key = string (123123)
+      location = map
+            latitude = number (1)
+            longitude = number (1)
+      text = string (TEST)
+      user = array
+            user[0]: _id = string
+            user[1]: name = string
+11. Return to Firebase Console. Click 'Location' on the left side of Firebase Console, then 'Get Started'. Choose to start in test mode. Choose a storage location (I recommend whichever seems closest to you) and click done.
+      NOTE: In Test mode all users will be able to upload images to firebase for your app for the next 30 days. You can change the date in the Rules section of storage in order to extend or reduce this timeframe. You can also put intol this rule user authentication logic to prevent un-authorized users from uploading images (user authentication logic for image upload is not currently supported in this app by default).
+12. Return to Firebase Console. Click 'Authentication' on the left side of Firebase Console, then 'Set-Up Sign in Method'. Choose 'Anonymous', toggle it to be 'enabled', then 'Save'.
+13. Your Firebase Setup is now complete.
+
 
 # Example Package.json:
+`
 {
   "name": "chat-app",
   "version": "1.0.0",
@@ -58,3 +85,4 @@ This is a basic chat app. Currently users can customize their chat name, colors,
   },
   "private": true
 }
+`
