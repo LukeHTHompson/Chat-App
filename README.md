@@ -4,7 +4,6 @@ This is a basic chat app. Currently users can customize their chat name, colors,
 # chat-app Setup
 1. Clone this repo into a new folder on your computer.
 2. Using a Command Line Interface navigate to this new folder and run the following commands: (???)
-      `
       npm install expo-cli --global
       expo install expo-camera
       expo install expo-image-picker
@@ -14,7 +13,6 @@ This is a basic chat app. Currently users can customize their chat name, colors,
       npm install @react-native-async-storage/async-storage
       npm install --save react-navigation
       Continue if necessary from package.json
-      `
 3. In your web browser navigate to https://firebase.google.com/
 4. Create an account on this page so you can use Firebase, or if you have an existing account click "Go To Console".
 5. Once in Console add a new project with any name you like.
@@ -42,7 +40,7 @@ This is a basic chat app. Currently users can customize their chat name, colors,
 
 
 # Example Package.json:
-`
+
 {
   "name": "chat-app",
   "version": "1.0.0",
@@ -85,4 +83,3 @@ This is a basic chat app. Currently users can customize their chat name, colors,
   },
   "private": true
 }
-`
