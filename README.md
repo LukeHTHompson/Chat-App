@@ -2,7 +2,7 @@
 This is a basic chat app. Currently users can customize their chat name, colors, share pictures from library or camera, as well as send their location data to other users in the chat room.
 
 # chat-app Setup
-1. Clone this repo into a new folder on your computer.
+1. Clone this repo into a new folder on your computer by downloading as a ZIP and extracting to the desired location.
 2. Using a Command Line Interface navigate to this new folder and run the following commands: (???)
       - npm install expo-cli --global
       - expo install expo-camera
