@@ -9,9 +9,15 @@ This is a basic chat app. Currently users can customize their chat name, colors,
       - expo install expo-image-picker
       - expo install expo-location
       - expo install expo-media-library
-      - npm install --save firebase
+      - npm install firebase@7.9.0
       - npm install @react-native-async-storage/async-storage
       - npm install --save react-navigation
+      - expo install react-native-gesture-handler
+      - expo install react-native-screens react-native-safe-area-context
+      - npm install @react-navigation/native-stack
+      - npm install react-native-gifted-chat --save
+      - npm install --save @react-native-community/netinfo
+      - npm install react-native-maps --save-exact
       - Continue if necessary from package.json
 3. In your web browser navigate to https://firebase.google.com/
 4. Create an account on this page so you can use Firebase, or if you have an existing account click "Go To Console".
