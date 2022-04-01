@@ -9,7 +9,7 @@ This is a basic chat app. Currently users can customize their chat name, colors,
       - expo install expo-image-picker
       - expo install expo-location
       - expo install expo-media-library
-      - npm install firebase@7.9.0
+      - npm install firebase@8.10.0
       - npm install @react-native-async-storage/async-storage
       - npm install --save react-navigation
       - expo install react-native-gesture-handler
